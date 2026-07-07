@@ -1,0 +1,245 @@
+Microsoft Fabric Interview Notes
+
+========================================================
+Introduction
+========================================================
+
+Microsoft Fabric is a unified analytics platform that brings together data engineering, data science, data warehousing, real-time analytics, Power BI, and data integration into a single SaaS platform.
+
+Fabric is built on top of OneLake, which acts as a single logical data lake for the entire organization.
+
+========================================================
+OneLake
+========================================================
+
+OneLake is the centralized storage layer in Microsoft Fabric.
+
+Features:
+- Single copy of data
+- Delta Parquet format
+- Supports shortcuts
+- No data duplication
+- Accessible by all Fabric workloads
+
+Interview Question:
+What is OneLake?
+
+Answer:
+OneLake is Microsoft's unified data lake for Fabric. It stores organizational data in Delta format and allows multiple workloads to access the same data without duplication.
+
+========================================================
+Lakehouse
+========================================================
+
+A Lakehouse combines the flexibility of a Data Lake with the performance of a Data Warehouse.
+
+Advantages:
+- Structured and unstructured data
+- ACID transactions
+- Delta tables
+- Spark support
+- SQL Analytics Endpoint
+
+Interview Question:
+What is a Lakehouse?
+
+Answer:
+A Lakehouse is a unified storage architecture that supports both analytics and machine learning while using Delta tables for reliability.
+
+========================================================
+Warehouse
+========================================================
+
+Fabric Warehouse is designed for SQL analytics.
+
+Features:
+- T-SQL
+- Star schema
+- High performance
+- BI reporting
+
+Interview Question:
+Difference between Warehouse and Lakehouse?
+
+Answer:
+Warehouse is optimized for SQL analytics.
+Lakehouse supports Spark, Machine Learning, and SQL together.
+
+========================================================
+Data Factory
+========================================================
+
+Fabric Data Factory is used for data integration.
+
+Activities:
+- Copy Data
+- Pipeline
+- Dataflow Gen2
+- Notebook
+- Stored Procedure
+- Web Activity
+
+Interview Question:
+What is Dataflow Gen2?
+
+Answer:
+Dataflow Gen2 is an ETL tool in Microsoft Fabric used to transform and load data into Lakehouse or Warehouse.
+
+========================================================
+Spark
+========================================================
+
+Apache Spark is used inside Fabric for distributed data processing.
+
+Operations:
+- Read data
+- Transform data
+- Write Delta tables
+
+Spark supports:
+- Python
+- Scala
+- SQL
+
+========================================================
+Delta Lake
+========================================================
+
+Delta Lake provides:
+
+- ACID transactions
+- Time Travel
+- Schema Enforcement
+- Schema Evolution
+
+Interview Question:
+Why Delta Lake?
+
+Answer:
+Delta Lake improves reliability by supporting ACID transactions, versioning, and schema management.
+
+========================================================
+Power BI
+========================================================
+
+Power BI in Fabric provides visualization and semantic models.
+
+Components:
+- Reports
+- Dashboards
+- Semantic Model
+- DAX
+
+Interview Question:
+What is a Semantic Model?
+
+Answer:
+A Semantic Model is the business layer that defines relationships, measures, calculations, and security for reporting.
+
+========================================================
+Capacity
+========================================================
+
+Fabric Capacity provides compute resources.
+
+Types:
+- F2
+- F4
+- F8
+- F16
+- F32
+
+Interview Question:
+What happens if Fabric Capacity reaches 100%?
+
+Answer:
+Jobs are queued or throttled depending on workload priority. Scaling the capacity or optimizing workloads can reduce bottlenecks.
+
+========================================================
+Notebook
+========================================================
+
+Fabric Notebook supports
+
+- Python
+- Spark SQL
+- Scala
+
+Used for:
+- Data Engineering
+- Machine Learning
+- Data Analysis
+
+========================================================
+Data Engineering
+========================================================
+
+Typical Pipeline:
+
+REST API
+↓
+
+Landing Zone
+↓
+
+Lakehouse Bronze
+
+↓
+
+Silver
+
+↓
+
+Gold
+
+↓
+
+Power BI
+
+========================================================
+Best Practices
+========================================================
+
+- Use OneLake shortcuts whenever possible.
+- Store data in Delta format.
+- Partition large tables.
+- Optimize Spark jobs.
+- Use incremental refresh.
+- Monitor Capacity Metrics.
+- Use managed identities for authentication.
+- Prefer Lakehouse for AI workloads.
+
+========================================================
+Frequently Asked Questions
+========================================================
+
+Q: What is Microsoft Fabric?
+
+A:
+Microsoft Fabric is an end-to-end unified analytics platform that integrates Data Engineering, Data Factory, Data Science, Real-Time Analytics, Data Warehouse, and Power BI into one SaaS solution.
+
+Q: What is OneLake?
+
+A:
+OneLake is the centralized storage layer shared across all Fabric workloads.
+
+Q: What is Delta Lake?
+
+A:
+Delta Lake is an open table format that provides ACID transactions, schema enforcement, and time travel.
+
+Q: Difference between Data Lake and Lakehouse?
+
+A:
+A Data Lake stores raw data.
+A Lakehouse combines Data Lake flexibility with Data Warehouse performance.
+
+Q: What is Dataflow Gen2?
+
+A:
+It is Microsoft's low-code ETL tool inside Fabric.
+
+Q: Why use Microsoft Fabric?
+
+A:
+Because it provides a single analytics platform with integrated storage, compute, governance, AI, and visualization.
