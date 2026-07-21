@@ -1,0 +1,247 @@
+:root {
+    --primary:       #6c63ff;
+    --primary-hover: #5a52e0;
+    --bg:            #0f1117;
+    --surface:       #1a1d27;
+    --surface-2:     #242736;
+    --border:        #2e3148;
+    --text:          #e2e8f0;
+    --text-muted:    #8892a4;
+    --success-bg:    rgba(16, 185, 129, 0.10);
+    --success-border:rgba(16, 185, 129, 0.30);
+    --success-text:  #6ee7b7;
+    --danger-bg:     rgba(239, 68, 68, 0.10);
+    --danger-border: rgba(239, 68, 68, 0.30);
+    --danger-text:   #fca5a5;
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* ── Navbar ───────────────────────────────────────────── */
+.navbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.875rem 0;
+}
+
+.navbar-brand { color: var(--text) !important; }
+
+.nav-caption {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* ── Tabs ─────────────────────────────────────────────── */
+.nav-tabs {
+    border-bottom: 1px solid var(--border);
+    gap: 0.25rem;
+}
+
+.nav-tabs .nav-link {
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 0;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.nav-tabs .nav-link:hover { color: var(--text); }
+
+.nav-tabs .nav-link.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+/* ── Card ─────────────────────────────────────────────── */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.card-title {
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* ── Drop Zone ────────────────────────────────────────── */
+.drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+    border-color: var(--primary);
+    background: rgba(108, 99, 255, 0.05);
+    color: var(--text);
+}
+
+/* ── Form Controls ────────────────────────────────────── */
+.form-control,
+.form-select {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background: var(--surface-2);
+    border-color: var(--primary);
+    color: var(--text);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.18);
+}
+
+.form-control::placeholder { color: var(--text-muted); }
+
+.form-select option { background: var(--surface-2); }
+
+.form-label,
+.label-text {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+}
+
+/* ── Buttons ──────────────────────────────────────────── */
+.btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.btn-primary:disabled { opacity: 0.4; }
+
+/* ── File list ────────────────────────────────────────── */
+.list-group-item {
+    background: var(--surface-2);
+    border-color: var(--border);
+    color: var(--text);
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+}
+
+/* ── Result Box ───────────────────────────────────────── */
+.result-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    line-height: 1.8;
+    font-size: 0.92rem;
+}
+
+.result-box h1, .result-box h2, .result-box h3,
+.result-box h4, .result-box h5 {
+    color: var(--text);
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-box p { margin-bottom: 0.75rem; }
+
+.result-box ul, .result-box ol {
+    padding-left: 1.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.result-box code {
+    background: rgba(108, 99, 255, 0.12);
+    color: #c4b5fd;
+    padding: 0.15em 0.45em;
+    border-radius: 4px;
+    font-size: 0.88em;
+}
+
+.result-box pre {
+    background: #0d0f18;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+}
+
+.result-box pre code {
+    background: none;
+    color: #e2e8f0;
+    padding: 0;
+}
+
+.result-box strong { color: var(--text); }
+
+.result-box blockquote {
+    border-left: 3px solid var(--primary);
+    padding-left: 1rem;
+    color: var(--text-muted);
+    margin: 0.75rem 0;
+}
+
+/* ── Sources ──────────────────────────────────────────── */
+.sources-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sources-list li {
+    background: var(--surface-2);
+    border-left: 3px solid var(--primary);
+    padding: 0.4rem 0.75rem;
+    margin-bottom: 0.4rem;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* ── Alerts ───────────────────────────────────────────── */
+.alert { border-radius: 8px; font-size: 0.875rem; }
+
+.alert-success {
+    background: var(--success-bg);
+    border-color: var(--success-border);
+    color: var(--success-text);
+}
+
+.alert-danger {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger-text);
+}
+
+/* ── Spinner ──────────────────────────────────────────── */
+.spinner-border {
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--primary) !important;
+    border-width: 0.22em;
+}

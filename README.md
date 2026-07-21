@@ -1,58 +1,54 @@
 # InterviewPilotAgent
 
-InterviewPilotAgent is a Streamlit-based interview Q&A assistant that indexes PDF and TXT documents into a FAISS vector store, then answers questions or generates interview-style question-and-answer pairs using Groq LLMs and HuggingFace embeddings.
+InterviewPilotAgent is an interview Q&A assistant that indexes PDF and TXT documents into a FAISS vector store, then answers questions or generates interview-style question-and-answer pairs using Groq LLMs and FastEmbed embeddings.
 
-## Features
+The project is split into three independently deployable pieces:
 
-- Upload PDF or TXT documents through a Streamlit UI
-- Index documents into a local FAISS vector store
-- Ask interview questions based on document context
-- Generate topic-based interview Q&A pairs with difficulty control
-- Stores uploaded documents and vector index under `data/`
+- **`agent/`** — the RAG core (document loading, embeddings, FAISS vector store, Groq LLM, prompts) wrapped in its own Flask API. This is the only piece that holds `GROQ_API_KEY`/`HF_TOKEN` and the document/vector-store data. Deploy it on its own host/container, scale it independently, or swap it out entirely without touching the other two pieces.
+- **`server/`** — a thin API gateway that the UI talks to. It has no RAG logic of its own; it forwards requests to the agent over HTTP (`AGENT_BASE_URL`) and handles CORS for the UI's origin.
+- **`client/`** — a plain static site (HTML/CSS/JS, no build step, no templating engine). It can be hosted anywhere static files are served (Nginx, S3, Netlify, etc.) and talks to `server/` over `API_BASE_URL`.
+
+```
+Browser (client/)  --fetch-->  server/ (gateway, CORS)  --HTTP-->  agent/ (RAG + Groq + FAISS)
+```
 
 ## Requirements
 
 - Python 3.11+
-- `GROQ_API_KEY` environment variable configured in a `.env` file
-- Dependencies listed in `requirements.txt`
+- `GROQ_API_KEY` (and optionally `HF_TOKEN`) for the agent service
 
-## Installation
+## Running locally
 
-1. Clone the repository
+Each service has its own `requirements.txt` and `.env`/`.env.example` — install and configure them independently.
 
-```bash
-git clone https://github.com/<your-org>/InterviewPilotAgent.git
-cd InterviewPilotAgent
-```
-
-2. Create and activate a Python environment
+### 1. Agent (port 5001)
 
 ```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-3. Install dependencies
-
-```bash
+cd agent
+python -m venv .venv && .venv\Scripts\activate
 pip install -r requirements.txt
+copy .env.example .env   # then fill in GROQ_API_KEY / HF_TOKEN
+python wsgi.py
 ```
 
-4. Add your Groq API key to a `.env` file
-
-```text
-GROQ_API_KEY=your_groq_api_key_here
-```
-
-## Usage
-
-Run the Streamlit app:
+### 2. Server (port 5000)
 
 ```bash
-streamlit run app.py
+cd server
+python -m venv .venv && .venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env   # AGENT_BASE_URL, ALLOWED_ORIGINS
+python wsgi.py
 ```
 
-Open the provided local URL in your browser.
+### 3. Client (static, e.g. port 8000)
+
+```bash
+cd client
+python -m http.server 8000
+```
+
+Open `http://localhost:8000`. Edit `client/static/js/config.js` (`API_BASE_URL`) to point at wherever `server/` is deployed in each environment.
 
 ### App workflow
 
@@ -61,22 +57,36 @@ Open the provided local URL in your browser.
 3. Ask a question in the `Ask Question` tab to retrieve answers from indexed content.
 4. Use the `Generate Q&A` tab to create interview questions and answers for a chosen topic.
 
+## Production deployment
+
+- **agent**: run behind `gunicorn wsgi:app` (already a dependency), keep `GROQ_API_KEY`/`HF_TOKEN` and the `data/` volume private to this service.
+- **server**: run behind `gunicorn wsgi:app`, set `AGENT_BASE_URL` to the agent's internal/private address and `ALLOWED_ORIGINS` to the client's public origin.
+- **client**: deploy as a static site; only `API_BASE_URL` needs to change per environment.
+
 ## Project structure
 
-- `app.py` - Streamlit UI and app flow
-- `src/config.py` - project configuration and constants
-- `src/document_loader.py` - file upload, document loading, and text splitting
-- `src/embedding_service.py` - embedding model initialization
-- `src/vector_store.py` - FAISS vector store persistence and search
-- `src/llm_service.py` - Groq LLM initialization
-- `src/rag_service.py` - retrieval-augmented generation and prompt orchestration
-- `src/prompts.py` - prompts for answering questions and generating Q&A
+```
+agent/
+  core/            # document_loader, embedding_service, vector_store, llm_service, rag_service, prompts, config
+  app/              # Flask app factory + blueprints (documents, qa) exposing the agent's HTTP API
+  data/             # uploaded documents + FAISS index (agent-local storage)
+  wsgi.py, requirements.txt, .env.example
+
+server/
+  app/              # Flask app factory + blueprints that forward requests to the agent, CORS config
+  wsgi.py, requirements.txt, .env.example
+
+client/
+  index.html
+  static/css/style.css
+  static/js/{config.js, app.js}
+```
 
 ## Notes
 
 - Document chunks are split using a 1000-character window with 150-character overlap.
-- The vector store is saved in `data/faiss_db/index.faiss`.
-- The app uses `sentence-transformers/all-MiniLM-L6-v2` for embeddings and `llama-3.3-70b-versatile` for generation.
+- The agent's vector store is saved in `agent/data/faiss_db/index.faiss`.
+- Embeddings use `BAAI/bge-small-en-v1.5` (FastEmbed) and generation uses `llama-3.3-70b-versatile` (Groq).
 
 ## License
 

@@ -1,9 +1,15 @@
-from src.llm_service import get_llm
-from src.vector_store import search_documents
-from src.prompts import ANSWER_PROMPT, GENERATE_QA_PROMPT
+from core.llm_service import get_llm
+from core.vector_store import search_documents
+from core.prompts import ANSWER_PROMPT, GENERATE_QA_PROMPT
+
+_llm = None
 
 
-llm = get_llm()
+def _get_llm():
+    global _llm
+    if _llm is None:
+        _llm = get_llm()
+    return _llm
 
 
 def build_context(documents):
@@ -37,7 +43,7 @@ def answer_question(question):
         context=context
     )
 
-    response = llm.invoke(prompt)
+    response = _get_llm().invoke(prompt)
 
     return response.content, get_sources(docs)
 
@@ -53,6 +59,6 @@ def generate_qa(topic, difficulty, count):
         context=context
     )
 
-    response = llm.invoke(prompt)
+    response = _get_llm().invoke(prompt)
 
     return response.content, get_sources(docs)

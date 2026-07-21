@@ -1,5 +1,5 @@
 from langchain_groq import ChatGroq
-from src.config import GROQ_MODEL
+from core.config import GROQ_MODEL
 
 
 def get_llm():

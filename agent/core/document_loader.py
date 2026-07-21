@@ -3,17 +3,20 @@ import os
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from src.config import DOCUMENTS_DIR, CHUNK_SIZE, CHUNK_OVERLAP
+from core.config import DOCUMENTS_DIR, CHUNK_SIZE, CHUNK_OVERLAP
 
 
 def save_uploaded_files(uploaded_files):
+    from werkzeug.utils import secure_filename
+
     saved_paths = []
 
     for uploaded_file in uploaded_files:
-        file_path = os.path.join(DOCUMENTS_DIR, uploaded_file.name)
+        filename = secure_filename(uploaded_file.filename)
+        file_path = os.path.join(DOCUMENTS_DIR, filename)
 
         with open(file_path, "wb") as file:
-            file.write(uploaded_file.getbuffer())
+            file.write(uploaded_file.read())
 
         saved_paths.append(file_path)
 
