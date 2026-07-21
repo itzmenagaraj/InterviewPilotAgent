@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#upload" type="button">
+            <i class="bi bi-cloud-upload me-1"></i>Upload Documents
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#ask" type="button">
+            <i class="bi bi-chat-dots me-1"></i>Ask Question
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#generate" type="button">
+            <i class="bi bi-card-list me-1"></i>Generate Q&amp;A
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content">
+
+    <!-- Upload Tab -->
+    <div class="tab-pane fade show active" id="upload" role="tabpanel">
+        <div class="row">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Upload &amp; Index Documents</h5>
+
+                        <div class="drop-zone" id="dropZone">
+                            <i class="bi bi-file-earmark-arrow-up fs-1 mb-2 d-block"></i>
+                            <p class="mb-1 fw-medium">Drag &amp; drop files here, or click to browse</p>
+                            <small class="text-muted">Supports PDF and TXT files</small>
+                            <input type="file" id="fileInput" multiple accept=".pdf,.txt" class="d-none">
+                        </div>
+
+                        <div class="d-none mt-3" id="fileList">
+                            <p class="label-text mb-2">Selected files</p>
+                            <ul class="list-group list-group-flush" id="fileListItems"></ul>
+                        </div>
+
+                        <button class="btn btn-primary mt-3 w-100" id="indexBtn" disabled>
+                            <i class="bi bi-database-add me-1"></i>Index Documents
+                        </button>
+
+                        <div class="alert mt-3 d-none" id="uploadAlert"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ask Question Tab -->
+    <div class="tab-pane fade" id="ask" role="tabpanel">
+        <div class="row">
+            <div class="col-md-10 col-lg-7">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Ask a Question</h5>
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="questionInput"
+                                placeholder="e.g. What is Microsoft Fabric Lakehouse?">
+                            <button class="btn btn-primary" id="askBtn">
+                                <i class="bi bi-send me-1"></i>Ask
+                            </button>
+                        </div>
+
+                        <div class="text-center py-4 d-none" id="answerSpinner">
+                            <div class="spinner-border"></div>
+                            <p class="mt-2 text-muted small">Thinking&hellip;</p>
+                        </div>
+
+                        <div class="d-none" id="answerResult">
+                            <div class="result-box mb-3" id="answerContent"></div>
+                            <div class="d-none" id="answerSources">
+                                <p class="label-text mb-2"><i class="bi bi-journal-text me-1"></i>Sources</p>
+                                <ul class="sources-list" id="answerSourcesList"></ul>
+                            </div>
+                        </div>
+
+                        <div class="alert mt-3 d-none" id="askAlert"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Q&A Tab -->
+    <div class="tab-pane fade" id="generate" role="tabpanel">
+        <div class="row">
+            <div class="col-md-10 col-lg-7">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Generate Interview Q&amp;A</h5>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-12">
+                                <label class="form-label" for="topicInput">Topic</label>
+                                <input type="text" class="form-control" id="topicInput"
+                                    placeholder="e.g. Azure Data Factory">
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="difficultySelect">Difficulty</label>
+                                <select class="form-select" id="difficultySelect">
+                                    <option>Beginner</option>
+                                    <option selected>Intermediate</option>
+                                    <option>Advanced</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="countInput">Number of Q&amp;A</label>
+                                <input type="number" class="form-control" id="countInput"
+                                    value="5" min="1" max="50">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary w-100" id="generateBtn">
+                            <i class="bi bi-stars me-1"></i>Generate
+                        </button>
+
+                        <div class="text-center py-4 d-none" id="generateSpinner">
+                            <div class="spinner-border"></div>
+                            <p class="mt-2 text-muted small">Generating Q&amp;A&hellip;</p>
+                        </div>
+
+                        <div class="d-none mt-3" id="generateResult">
+                            <div class="result-box mb-3" id="generateContent"></div>
+                            <div class="d-none" id="generateSources">
+                                <p class="label-text mb-2"><i class="bi bi-journal-text me-1"></i>Sources</p>
+                                <ul class="sources-list" id="generateSourcesList"></ul>
+                            </div>
+                        </div>
+
+                        <div class="alert mt-3 d-none" id="generateAlert"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

@@ -168,7 +168,7 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.result-box p { margin-bottom: 0.75rem; }
+.result-box p { margin-bottom: 0.75rem; color: #ffffff; }
 
 .result-box ul, .result-box ol {
     padding-left: 1.4rem;

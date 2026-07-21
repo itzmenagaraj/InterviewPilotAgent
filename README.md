@@ -6,7 +6,7 @@ The project is split into three independently deployable pieces:
 
 - **`agent/`** — the RAG core (document loading, embeddings, FAISS vector store, Groq LLM, prompts) wrapped in its own Flask API. This is the only piece that holds `GROQ_API_KEY`/`HF_TOKEN` and the document/vector-store data. Deploy it on its own host/container, scale it independently, or swap it out entirely without touching the other two pieces.
 - **`server/`** — a thin API gateway that the UI talks to. It has no RAG logic of its own; it forwards requests to the agent over HTTP (`AGENT_BASE_URL`) and handles CORS for the UI's origin.
-- **`client/`** — a plain static site (HTML/CSS/JS, no build step, no templating engine). It can be hosted anywhere static files are served (Nginx, S3, Netlify, etc.) and talks to `server/` over `API_BASE_URL`.
+- **`client/`** — a Flask app (Jinja templates + static CSS/JS, same app-factory/blueprint pattern as `agent/`/`server/`) that renders the UI and talks to `server/` over `API_BASE_URL`. New pages are added as a template + a route in `client/app/blueprints/pages.py`.
 
 ```
 Browser (client/)  --fetch-->  server/ (gateway, CORS)  --HTTP-->  agent/ (RAG + Groq + FAISS)
@@ -41,11 +41,13 @@ copy .env.example .env   # AGENT_BASE_URL, ALLOWED_ORIGINS
 python wsgi.py
 ```
 
-### 3. Client (static, e.g. port 8000)
+### 3. Client (port 8000)
 
 ```bash
 cd client
-python -m http.server 8000
+python -m venv .venv && .venv\Scripts\activate
+pip install -r requirements.txt
+python wsgi.py
 ```
 
 Open `http://localhost:8000`. Edit `client/static/js/config.js` (`API_BASE_URL`) to point at wherever `server/` is deployed in each environment.
@@ -61,7 +63,7 @@ Open `http://localhost:8000`. Edit `client/static/js/config.js` (`API_BASE_URL`)
 
 - **agent**: run behind `gunicorn wsgi:app` (already a dependency), keep `GROQ_API_KEY`/`HF_TOKEN` and the `data/` volume private to this service.
 - **server**: run behind `gunicorn wsgi:app`, set `AGENT_BASE_URL` to the agent's internal/private address and `ALLOWED_ORIGINS` to the client's public origin.
-- **client**: deploy as a static site; only `API_BASE_URL` needs to change per environment.
+- **client**: run behind `gunicorn wsgi:app`; only `API_BASE_URL` (in `static/js/config.js`) needs to change per environment.
 
 ## Project structure
 
@@ -77,9 +79,11 @@ server/
   wsgi.py, requirements.txt, .env.example
 
 client/
-  index.html
+  app/              # Flask app factory + blueprints (pages) rendering the UI
+  templates/        # base.html layout + one template per page (index.html)
   static/css/style.css
   static/js/{config.js, app.js}
+  wsgi.py, requirements.txt
 ```
 
 ## Notes
